@@ -41,7 +41,7 @@ class GildedRoseTest extends TestCase
     }
 
     // Normal Item : quality decreases x2 after sell date passed
-    public function testNormalItemAfterSelInPassed(): void
+    public function testRegularItemAfterSellInPassed(): void
     {
         $items = [new Item(self::ITEM_REGULAR, -1, 20)];
         $gildedRose = new GildedRose($items);
@@ -57,6 +57,7 @@ class GildedRoseTest extends TestCase
     {
         $items = [
                     new Item(self::ITEM_REGULAR, 10, 0),
+                    new Item(self::ITEM_REGULAR, -2, 0),
                     new Item(self::ITEM_NAME_BACKSTAGEPASS, 8, 0),
                     new Item(self::ITEM_NAME_BRIE, 6, 0),
                     new Item(self::ITEM_NAME_SULFURAS, 12, 0)
@@ -66,7 +67,7 @@ class GildedRoseTest extends TestCase
         $gildedRose->updateQuality();
 
         foreach($items as $item) {
-            $this->assertSame(0, $items[0]->quality);
+            $this->assertSame(0, $item->quality);
         }
     }
 
