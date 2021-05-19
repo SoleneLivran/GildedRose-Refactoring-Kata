@@ -46,17 +46,16 @@ final class GildedRose
 
     private function regularItemUpdate(Item $item): void
     {
-        // before sell date is passed
-        if ($item->sell_in > 0) {
+        if ($item->sell_in > 0) { // before sell date is passed
             if ($item->quality >= 1) {
                 $item->quality = $item->quality - 1;
             }
-        // after sell date is passed
-        } else {
+        } else { // after sell date is passed
             if ($item->quality >= 2) {
                 $item->quality = $item->quality - 2;
             }
         }
+
         $this->decreaseItemSellIn($item);
     }
 
@@ -71,6 +70,7 @@ final class GildedRose
         } else {
             $item->quality = $item->quality + 1;
         }
+
         $this->decreaseItemSellIn($item);
     }
 
