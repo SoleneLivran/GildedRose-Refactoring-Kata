@@ -62,16 +62,14 @@ final class GildedRose
 
     private function backstagePassUpdate(Item $item): void
     {
-        if ($item->sell_in > 0) {
-            if ($item->sell_in < 6) {
-                $item->quality = $item->quality + 3;
-            } else if ($item->sell_in < 11) {
-                $item->quality = $item->quality + 2;
-            } else {
-                $item->quality = $item->quality + 1;
-            }
-        } else {
+        if ($item->sell_in <= 0) {
             $item->quality = 0;
+        } else if ($item->sell_in < 6) {
+            $item->quality = $item->quality + 3;
+        } else if ($item->sell_in < 11) {
+            $item->quality = $item->quality + 2;
+        } else {
+            $item->quality = $item->quality + 1;
         }
         $this->decreaseItemSellIn($item);
     }
