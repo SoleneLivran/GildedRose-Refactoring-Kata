@@ -58,8 +58,8 @@ class GildedRoseTest extends TestCase
         $items = [
                     new Item(self::ITEM_REGULAR, 10, 0),
                     new Item(self::ITEM_REGULAR, -2, 0),
-                    new Item(self::ITEM_NAME_BACKSTAGEPASS, 8, 0),
-                    new Item(self::ITEM_NAME_BRIE, 6, 0),
+                    new Item(self::ITEM_NAME_BACKSTAGEPASS, 0, 0),
+                    new Item(self::ITEM_NAME_BACKSTAGEPASS, -1, 0),
                     new Item(self::ITEM_NAME_SULFURAS, 12, 0)
         ];
         $gildedRose = new GildedRose($items);
