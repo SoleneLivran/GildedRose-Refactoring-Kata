@@ -83,7 +83,7 @@ class GildedRoseTest extends TestCase
         $gildedRose->updateQuality();
 
         foreach($items as $item) {
-            $this->assertSame(50, $items[0]->quality);
+            $this->assertSame(50, $item->quality);
         }
     }
 
