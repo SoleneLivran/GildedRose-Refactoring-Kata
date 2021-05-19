@@ -11,6 +11,11 @@ final class GildedRose
      */
     private $items;
 
+    const ITEM_NAME_BACKSTAGEPASS = 'Backstage passes to a TAFKAL80ETC concert';
+    const ITEM_NAME_BRIE = 'Aged Brie';
+    const ITEM_NAME_SULFURAS = 'Sulfuras, Hand of Ragnaros';
+
+
     public function __construct(array $items)
     {
         $this->items = $items;
@@ -19,9 +24,9 @@ final class GildedRose
     public function updateQuality(): void
     {
         foreach ($this->items as $item) {
-            if ($item->name === 'Aged Brie' || $item->name === 'Backstage passes to a TAFKAL80ETC concert') {
+            if ($item->name === self::ITEM_NAME_BRIE || $item->name === self::ITEM_NAME_BACKSTAGEPASS) {
                 $this->increasableQualityItemUpdate($item);
-            } else if ($item->name != 'Sulfuras, Hand of Ragnaros') {
+            } else if ($item->name != self::ITEM_NAME_SULFURAS) {
                 $this->regularItemUpdate($item);
             }
         }
@@ -30,7 +35,7 @@ final class GildedRose
     private function increasableQualityItemUpdate(Item $item): void
     {
         if ($item->quality < 50) { // if quality is allowed to go up
-            if ($item->name == 'Backstage passes to a TAFKAL80ETC concert') {
+            if ($item->name == self::ITEM_NAME_BACKSTAGEPASS) {
                 // specific logic for "backstage passes"
                 $this->backstagePassUpdate($item);
             } else {
