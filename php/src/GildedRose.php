@@ -53,13 +53,24 @@ final class GildedRose
 
     private function increasableQualityItemUpdate(Item $item): void
     {
-        if ($item->quality < self::QUALITY_MAX) { // if quality is allowed to go up
-            if ($item->name == self::ITEM_NAME_BACKSTAGEPASS) {
-                // specific logic for "backstage passes"
-                $this->backstagePassUpdate($item);
-            } else {
-                $item->quality = $item->quality + self::QUALITY_CHANGE_REGULAR;
-            }
+        if ($item->name == self::ITEM_NAME_BACKSTAGEPASS) {
+            // specific logic for "backstage passes"
+            $this->backstagePassUpdate($item);
+        } else {
+            $this->increaseQuality($item, self::QUALITY_CHANGE_REGULAR);
+        }
+    }
+
+    private function backstagePassUpdate(Item $item): void
+    {
+        if ($item->sell_in <= self::SELL_IN_PASSED) {
+            $item->quality = self::QUALITY_MIN;
+        } else if ($item->sell_in < 6) {
+            $this->increaseQuality($item, self::BACKSTAGEPASS_QUALITY_LAST_MINUTE_INCREASE);
+        } else if ($item->sell_in < 11) {
+            $this->increaseQuality($item, self::QUALITY_CHANGE_DOUBLE);
+        } else {
+            $this->increaseQuality($item, self::QUALITY_CHANGE_REGULAR);
         }
     }
 
@@ -69,19 +80,6 @@ final class GildedRose
             $this->decreaseQuality($item, self::QUALITY_CHANGE_REGULAR);
         } else { // after sell date is passed
             $this->decreaseQuality($item, self::QUALITY_CHANGE_DOUBLE);
-        }
-    }
-
-    private function backstagePassUpdate(Item $item): void
-    {
-        if ($item->sell_in <= self::SELL_IN_PASSED) {
-            $item->quality = self::QUALITY_MIN;
-        } else if ($item->sell_in < 6) {
-            $item->quality <= self::QUALITY_MAX - self::BACKSTAGEPASS_QUALITY_LAST_MINUTE_INCREASE ? $item->quality = $item->quality + self::BACKSTAGEPASS_QUALITY_LAST_MINUTE_INCREASE : $item->quality = self::QUALITY_MAX;
-        } else if ($item->sell_in < 11) {
-            $item->quality <= self::QUALITY_MAX - self::QUALITY_CHANGE_DOUBLE ? $item->quality = $item->quality + self::QUALITY_CHANGE_DOUBLE : $item->quality = self::QUALITY_MAX;
-        } else {
-            $item->quality = $item->quality + self::QUALITY_CHANGE_REGULAR;
         }
     }
 
@@ -101,6 +99,7 @@ final class GildedRose
 
     private function increaseQuality(Item $item, int $changeValue): void
     {
+        $item->quality <= self::QUALITY_MAX - $changeValue ? $item->quality = $item->quality + $changeValue : $item->quality = self::QUALITY_MAX;
     }
 
     private function decreaseQuality(Item $item, int $changeValue): void
