@@ -65,6 +65,18 @@ class GildedRoseTest extends TestCase
         $this->assertSame(18, $items[0]->quality);
     }
 
+    // Conjured Item : quality decreases x4 after sell date passed
+    public function testConjuredItemAfterSellInPassed(): void
+    {
+        $items = [new Item(self::ITEM_CONJURED, -1, 20)];
+        $gildedRose = new GildedRose($items);
+
+        $gildedRose->updateQuality();
+
+        $this->assertSame(-2, $items[0]->sell_in);
+        $this->assertSame(16, $items[0]->quality);
+    }
+
     // Any Item with decreasing quality : quality cannot go below 0
     public function testQualityNotBelowZero(): void
     {
@@ -75,7 +87,8 @@ class GildedRoseTest extends TestCase
                     new Item(self::ITEM_NAME_BACKSTAGEPASS, -1, 0),
                     new Item(self::ITEM_NAME_SULFURAS, 12, 0),
                     new Item(self::ITEM_CONJURED, 10, 0),
-                    new Item(self::ITEM_CONJURED, 6, 1)
+                    new Item(self::ITEM_CONJURED, 6, 1),
+                    new Item(self::ITEM_CONJURED, -1, 3)
         ];
         $gildedRose = new GildedRose($items);
 
