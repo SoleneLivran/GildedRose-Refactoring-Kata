@@ -21,7 +21,7 @@ final class GildedRose
     const SELL_IN_DECREASE_REGULAR = 1;
     const QUALITY_CHANGE_REGULAR = 1;
     const QUALITY_CHANGE_DOUBLE = self::QUALITY_CHANGE_REGULAR * 2;
-    const QUALITY_CHANGE_QUADRUPLE = self::QUALITY_CHANGE_DOUBLE * 2;
+    const QUALITY_CHANGE_AFTER_SELL_IN_MODIFIER = 2;
     const BACKSTAGEPASS_SELL_IN_APPROACHING = 10;
     const BACKSTAGEPASS_SELL_IN_LAST_MINUTE = 5;
     const BACKSTAGEPASS_QUALITY_LAST_MINUTE_INCREASE = 3;
@@ -45,10 +45,8 @@ final class GildedRose
                     $this->increasableQualityItemUpdate($item);
                     break;
                 case self::ITEM_CONJURED:
-                    $this->conjuredItemUpdate($item);
-                    break;
                 default:
-                    $this->regularItemUpdate($item);
+                    $this->decreasableQualityItemUpdate($item);
             }
             $this->decreaseItemSellIn($item);
         }
@@ -77,22 +75,24 @@ final class GildedRose
         }
     }
 
+    private function decreasableQualityItemUpdate(Item $item): void
+    {
+        if ($item->name == self::ITEM_CONJURED) {
+            // specific logic for "conjured items"
+            $this->conjuredItemUpdate($item);
+        } else {
+            $this->regularItemUpdate($item);
+        }
+    }
+
     private function regularItemUpdate(Item $item): void
     {
-        if ($item->sell_in > self::SELL_IN_PASSED) { // before sell date is passed
-            $this->decreaseQuality($item, self::QUALITY_CHANGE_REGULAR);
-        } else { // after sell date is passed
-            $this->decreaseQuality($item, self::QUALITY_CHANGE_DOUBLE);
-        }
+        $this->decreaseQuality($item, self::QUALITY_CHANGE_REGULAR);
     }
 
     private function conjuredItemUpdate(Item $item): void
     {
-        if ($item->sell_in > self::SELL_IN_PASSED) { // before sell date is passed
-            $this->decreaseQuality($item, self::QUALITY_CHANGE_DOUBLE);
-        } else { // after sell date is passed
-            $this->decreaseQuality($item, self::QUALITY_CHANGE_QUADRUPLE);
-        }
+        $this->decreaseQuality($item, self::QUALITY_CHANGE_DOUBLE);
     }
 
     private function decreaseItemSellIn(Item $item): void
@@ -107,6 +107,10 @@ final class GildedRose
 
     private function decreaseQuality(Item $item, int $changeValue): void
     {
+        if ($item->sell_in <= self::SELL_IN_PASSED) {
+            $changeValue = $changeValue * self::QUALITY_CHANGE_AFTER_SELL_IN_MODIFIER;
+        }
+
         $item->quality >= $changeValue ? $item->quality = $item->quality - $changeValue : $item->quality = self::QUALITY_MIN;
     }
 }
