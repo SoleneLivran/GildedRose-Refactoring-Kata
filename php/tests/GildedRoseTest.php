@@ -14,6 +14,7 @@ class GildedRoseTest extends TestCase
     const ITEM_NAME_BRIE = 'Aged Brie';
     const ITEM_NAME_SULFURAS = 'Sulfuras, Hand of Ragnaros';
     const ITEM_REGULAR = 'foo';
+    const ITEM_CONJURED = 'Conjured Mana Cake';
 
     public function testFoo(): void
     {
@@ -40,6 +41,18 @@ class GildedRoseTest extends TestCase
         $this->assertSame(19, $items[0]->quality);
     }
 
+    // Conjured items : quality decreases by 2 and sell_in decrase by one
+    public function testConjuredItem(): void
+    {
+        $items = [new Item(self::ITEM_CONJURED, 10, 20)];
+        $gildedRose = new GildedRose($items);
+
+        $gildedRose->updateQuality();
+
+        $this->assertSame(9, $items[0]->sell_in);
+        $this->assertSame(18, $items[0]->quality);
+    }
+
     // Normal Item : quality decreases x2 after sell date passed
     public function testRegularItemAfterSellInPassed(): void
     {
@@ -52,7 +65,7 @@ class GildedRoseTest extends TestCase
         $this->assertSame(18, $items[0]->quality);
     }
 
-    // Any Item : quality cannot go below 0
+    // Any Item with decreasing quality : quality cannot go below 0
     public function testQualityNotBelowZero(): void
     {
         $items = [
@@ -60,7 +73,9 @@ class GildedRoseTest extends TestCase
                     new Item(self::ITEM_REGULAR, -2, 0),
                     new Item(self::ITEM_NAME_BACKSTAGEPASS, 0, 0),
                     new Item(self::ITEM_NAME_BACKSTAGEPASS, -1, 0),
-                    new Item(self::ITEM_NAME_SULFURAS, 12, 0)
+                    new Item(self::ITEM_NAME_SULFURAS, 12, 0),
+                    new Item(self::ITEM_CONJURED, 10, 0),
+                    new Item(self::ITEM_CONJURED, 6, 1)
         ];
         $gildedRose = new GildedRose($items);
 
