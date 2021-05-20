@@ -18,9 +18,12 @@ final class GildedRose
     const QUALITY_MIN = 0;
     const QUALITY_MAX = 50;
     const SELL_IN_PASSED = 0;
+    const SELL_IN_DECREASE_REGULAR = 1;
     const QUALITY_CHANGE_REGULAR = 1;
     const QUALITY_CHANGE_DOUBLE = self::QUALITY_CHANGE_REGULAR * 2;
     const QUALITY_CHANGE_QUADRUPLE = self::QUALITY_CHANGE_DOUBLE * 2;
+    const BACKSTAGEPASS_SELL_IN_APPROACHING = 10;
+    const BACKSTAGEPASS_SELL_IN_LAST_MINUTE = 5;
     const BACKSTAGEPASS_QUALITY_LAST_MINUTE_INCREASE = 3;
 
 
@@ -65,9 +68,9 @@ final class GildedRose
     {
         if ($item->sell_in <= self::SELL_IN_PASSED) {
             $item->quality = self::QUALITY_MIN;
-        } else if ($item->sell_in < 6) {
+        } else if ($item->sell_in <= self::BACKSTAGEPASS_SELL_IN_LAST_MINUTE) {
             $this->increaseQuality($item, self::BACKSTAGEPASS_QUALITY_LAST_MINUTE_INCREASE);
-        } else if ($item->sell_in < 11) {
+        } else if ($item->sell_in <= self::BACKSTAGEPASS_SELL_IN_APPROACHING) {
             $this->increaseQuality($item, self::QUALITY_CHANGE_DOUBLE);
         } else {
             $this->increaseQuality($item, self::QUALITY_CHANGE_REGULAR);
@@ -94,7 +97,7 @@ final class GildedRose
 
     private function decreaseItemSellIn(Item $item): void
     {
-        $item->sell_in = $item->sell_in - 1;
+        $item->sell_in = $item->sell_in - self::SELL_IN_DECREASE_REGULAR;
     }
 
     private function increaseQuality(Item $item, int $changeValue): void
