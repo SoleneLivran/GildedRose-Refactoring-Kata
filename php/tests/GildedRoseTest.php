@@ -105,6 +105,8 @@ class GildedRoseTest extends TestCase
     {
         $items = [
             new Item(self::ITEM_NAME_BACKSTAGEPASS, 8, 50),
+            new Item(self::ITEM_NAME_BACKSTAGEPASS, 1, 48),
+            new Item(self::ITEM_NAME_BACKSTAGEPASS, 4, 49),
             new Item(self::ITEM_NAME_BRIE, 6, 50)
         ];
         $gildedRose = new GildedRose($items);
