@@ -149,6 +149,7 @@ class GildedRoseTest extends TestCase
 
         $gildedRose->updateQuality();
 
+        $this->assertSame(10, $items[0]->sell_in);
         $this->assertSame(21, $items[0]->quality);
     }
 
@@ -163,7 +164,9 @@ class GildedRoseTest extends TestCase
 
         $gildedRose->updateQuality();
 
+        $this->assertSame(9, $items[0]->sell_in);
         $this->assertSame(22, $items[0]->quality);
+        $this->assertSame(17, $items[1]->sell_in);
         $this->assertSame(13, $items[1]->quality);
     }
     // Backstage pass, sell-in 5 days or less : quality increases by 3
@@ -177,7 +180,9 @@ class GildedRoseTest extends TestCase
 
         $gildedRose->updateQuality();
 
+        $this->assertSame(4, $items[0]->sell_in);
         $this->assertSame(23, $items[0]->quality);
+        $this->assertSame(0, $items[1]->sell_in);
         $this->assertSame(15, $items[1]->quality);
     }
     // Backstage pass, sell-in has passed (0 or below) : quality is 0
@@ -191,7 +196,9 @@ class GildedRoseTest extends TestCase
 
         $gildedRose->updateQuality();
 
+        $this->assertSame(-1, $items[0]->sell_in);
         $this->assertSame(0, $items[0]->quality);
+        $this->assertSame(-2, $items[1]->sell_in);
         $this->assertSame(0, $items[1]->quality);
     }
 }
