@@ -26,12 +26,16 @@ final class GildedRose
     {
         foreach ($this->items as $item) {
             if ($item->name != self::ITEM_NAME_SULFURAS) {
-                if ($item->name === self::ITEM_NAME_BRIE || $item->name === self::ITEM_NAME_BACKSTAGEPASS) {
-                    $this->increasableQualityItemUpdate($item);
-                } else if ($item->name === self::ITEM_CONJURED) {
-                    $this->conjuredItemUpdate($item);
-                } else {
-                    $this->regularItemUpdate($item);
+                switch ($item->name) {
+                    case self::ITEM_NAME_BRIE:
+                    case self::ITEM_NAME_BACKSTAGEPASS:
+                        $this->increasableQualityItemUpdate($item);
+                        break;
+                    case self::ITEM_CONJURED:
+                        $this->conjuredItemUpdate($item);
+                        break;
+                    default:
+                        $this->regularItemUpdate($item);
                 }
                 $this->decreaseItemSellIn($item);
             }
