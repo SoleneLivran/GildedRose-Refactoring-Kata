@@ -25,12 +25,15 @@ final class GildedRose
     public function updateQuality(): void
     {
         foreach ($this->items as $item) {
-            if ($item->name === self::ITEM_NAME_BRIE || $item->name === self::ITEM_NAME_BACKSTAGEPASS) {
-                $this->increasableQualityItemUpdate($item);
-            } else if ($item->name === self::ITEM_CONJURED) {
-                $this->conjuredItemUpdate($item);
-            } else if ($item->name != self::ITEM_NAME_SULFURAS) {
-                $this->regularItemUpdate($item);
+            if ($item->name != self::ITEM_NAME_SULFURAS) {
+                if ($item->name === self::ITEM_NAME_BRIE || $item->name === self::ITEM_NAME_BACKSTAGEPASS) {
+                    $this->increasableQualityItemUpdate($item);
+                } else if ($item->name === self::ITEM_CONJURED) {
+                    $this->conjuredItemUpdate($item);
+                } else {
+                    $this->regularItemUpdate($item);
+                }
+                $this->decreaseItemSellIn($item);
             }
         }
     }
@@ -60,8 +63,6 @@ final class GildedRose
                 $item->quality = 0;
             }
         }
-
-        $this->decreaseItemSellIn($item);
     }
 
     private function backstagePassUpdate(Item $item): void
@@ -75,8 +76,6 @@ final class GildedRose
         } else {
             $item->quality = $item->quality + 1;
         }
-
-        $this->decreaseItemSellIn($item);
     }
 
     private function conjuredItemUpdate(Item $item): void
@@ -94,8 +93,6 @@ final class GildedRose
                 $item->quality = 0;
             }
         }
-
-        $this->decreaseItemSellIn($item);
     }
 
     private function decreaseItemSellIn(Item $item): void
