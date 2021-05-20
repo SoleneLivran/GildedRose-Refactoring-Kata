@@ -28,20 +28,21 @@ final class GildedRose
     public function updateQuality(): void
     {
         foreach ($this->items as $item) {
-            if ($item->name != self::ITEM_NAME_SULFURAS) {
-                switch ($item->name) {
-                    case self::ITEM_NAME_BRIE:
-                    case self::ITEM_NAME_BACKSTAGEPASS:
-                        $this->increasableQualityItemUpdate($item);
-                        break;
-                    case self::ITEM_CONJURED:
-                        $this->conjuredItemUpdate($item);
-                        break;
-                    default:
-                        $this->regularItemUpdate($item);
-                }
-                $this->decreaseItemSellIn($item);
+            if ($item->name == self::ITEM_NAME_SULFURAS) {
+                continue;
             }
+            switch ($item->name) {
+                case self::ITEM_NAME_BRIE:
+                case self::ITEM_NAME_BACKSTAGEPASS:
+                    $this->increasableQualityItemUpdate($item);
+                    break;
+                case self::ITEM_CONJURED:
+                    $this->conjuredItemUpdate($item);
+                    break;
+                default:
+                    $this->regularItemUpdate($item);
+            }
+            $this->decreaseItemSellIn($item);
         }
     }
 
