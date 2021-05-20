@@ -118,7 +118,7 @@ class GildedRoseTest extends TestCase
         }
     }
 
-    // Aged Brie Item : quality increases by 1 each day
+    // Aged Brie Item : quality increases by 1 each day and sell-in decreases by 1
     public function testItemQualityIncreasesByOne(): void
     {
         $items = [new Item(self::ITEM_NAME_BRIE, 7, 20)];
@@ -126,6 +126,7 @@ class GildedRoseTest extends TestCase
 
         $gildedRose->updateQuality();
 
+        $this->assertSame(6, $items[0]->sell_in);
         $this->assertSame(21, $items[0]->quality);
     }
 
