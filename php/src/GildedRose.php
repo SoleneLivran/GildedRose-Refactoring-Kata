@@ -18,6 +18,11 @@ final class GildedRose
     const QUALITY_MIN = 0;
     const QUALITY_MAX = 50;
     const SELL_IN_PASSED = 0;
+    const QUALITY_CHANGE_REGULAR = 1;
+    const QUALITY_CHANGE_DOUBLE = self::QUALITY_CHANGE_REGULAR * 2;
+    const QUALITY_CHANGE_QUADRUPLE = self::QUALITY_CHANGE_DOUBLE * 2;
+    const BACKSTAGEPASS_QUALITY_LAST_MINUTE_INCREASE = 3;
+
 
 
     public function __construct(array $items)
@@ -53,7 +58,7 @@ final class GildedRose
                 // specific logic for "backstage passes"
                 $this->backstagePassUpdate($item);
             } else {
-                $item->quality = $item->quality + 1;
+                $item->quality = $item->quality + self::QUALITY_CHANGE_REGULAR;
             }
         }
     }
@@ -61,15 +66,9 @@ final class GildedRose
     private function regularItemUpdate(Item $item): void
     {
         if ($item->sell_in > self::SELL_IN_PASSED) { // before sell date is passed
-            if ($item->quality >= 1) {
-                $item->quality = $item->quality - 1;
-            }
+            $this->decreaseQuality($item, self::QUALITY_CHANGE_REGULAR);
         } else { // after sell date is passed
-            if ($item->quality >= 2) {
-                $item->quality = $item->quality - 2;
-            } else {
-                $item->quality = self::QUALITY_MIN;
-            }
+            $this->decreaseQuality($item, self::QUALITY_CHANGE_DOUBLE);
         }
     }
 
@@ -78,33 +77,34 @@ final class GildedRose
         if ($item->sell_in <= self::SELL_IN_PASSED) {
             $item->quality = self::QUALITY_MIN;
         } else if ($item->sell_in < 6) {
-            $item->quality <= self::QUALITY_MAX - 3 ? $item->quality = $item->quality + 3 : $item->quality = self::QUALITY_MAX;
+            $item->quality <= self::QUALITY_MAX - self::BACKSTAGEPASS_QUALITY_LAST_MINUTE_INCREASE ? $item->quality = $item->quality + self::BACKSTAGEPASS_QUALITY_LAST_MINUTE_INCREASE : $item->quality = self::QUALITY_MAX;
         } else if ($item->sell_in < 11) {
-            $item->quality <= self::QUALITY_MAX - 2 ? $item->quality = $item->quality + 2 : $item->quality = self::QUALITY_MAX;
+            $item->quality <= self::QUALITY_MAX - self::QUALITY_CHANGE_DOUBLE ? $item->quality = $item->quality + self::QUALITY_CHANGE_DOUBLE : $item->quality = self::QUALITY_MAX;
         } else {
-            $item->quality = $item->quality + 1;
+            $item->quality = $item->quality + self::QUALITY_CHANGE_REGULAR;
         }
     }
 
     private function conjuredItemUpdate(Item $item): void
     {
         if ($item->sell_in > self::SELL_IN_PASSED) { // before sell date is passed
-            if ($item->quality >= 2) {
-                $item->quality = $item->quality - 2;
-            } else {
-                $item->quality = self::QUALITY_MIN;
-            }
+            $this->decreaseQuality($item, self::QUALITY_CHANGE_DOUBLE);
         } else { // after sell date is passed
-            if ($item->quality >= 4) {
-                $item->quality = $item->quality - 4;
-            } else {
-                $item->quality = self::QUALITY_MIN;
-            }
+            $this->decreaseQuality($item, self::QUALITY_CHANGE_QUADRUPLE);
         }
     }
 
     private function decreaseItemSellIn(Item $item): void
     {
         $item->sell_in = $item->sell_in - 1;
+    }
+
+    private function increaseQuality(Item $item, int $changeValue): void
+    {
+    }
+
+    private function decreaseQuality(Item $item, int $changeValue): void
+    {
+        $item->quality >= $changeValue ? $item->quality = $item->quality - $changeValue : $item->quality = self::QUALITY_MIN;
     }
 }
