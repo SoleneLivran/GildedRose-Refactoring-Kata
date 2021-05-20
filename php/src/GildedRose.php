@@ -15,6 +15,9 @@ final class GildedRose
     const ITEM_NAME_BRIE = 'Aged Brie';
     const ITEM_NAME_SULFURAS = 'Sulfuras, Hand of Ragnaros';
     const ITEM_CONJURED = 'Conjured Mana Cake';
+    const QUALITY_MIN = 0;
+    const QUALITY_MAX = 50;
+    const SELL_IN_PASSED = 0;
 
 
     public function __construct(array $items)
@@ -44,7 +47,7 @@ final class GildedRose
 
     private function increasableQualityItemUpdate(Item $item): void
     {
-        if ($item->quality < 50) { // if quality is allowed to go up
+        if ($item->quality < self::QUALITY_MAX) { // if quality is allowed to go up
             if ($item->name == self::ITEM_NAME_BACKSTAGEPASS) {
                 // specific logic for "backstage passes"
                 $this->backstagePassUpdate($item);
@@ -56,7 +59,7 @@ final class GildedRose
 
     private function regularItemUpdate(Item $item): void
     {
-        if ($item->sell_in > 0) { // before sell date is passed
+        if ($item->sell_in > self::SELL_IN_PASSED) { // before sell date is passed
             if ($item->quality >= 1) {
                 $item->quality = $item->quality - 1;
             }
@@ -64,19 +67,19 @@ final class GildedRose
             if ($item->quality >= 2) {
                 $item->quality = $item->quality - 2;
             } else {
-                $item->quality = 0;
+                $item->quality = self::QUALITY_MIN;
             }
         }
     }
 
     private function backstagePassUpdate(Item $item): void
     {
-        if ($item->sell_in <= 0) {
-            $item->quality = 0;
+        if ($item->sell_in <= self::SELL_IN_PASSED) {
+            $item->quality = self::QUALITY_MIN;
         } else if ($item->sell_in < 6) {
-            $item->quality <= 47 ? $item->quality = $item->quality + 3 : $item->quality = 50;
+            $item->quality <= self::QUALITY_MAX - 3 ? $item->quality = $item->quality + 3 : $item->quality = self::QUALITY_MAX;
         } else if ($item->sell_in < 11) {
-            $item->quality <= 48 ? $item->quality = $item->quality + 2 : $item->quality = 50;
+            $item->quality <= self::QUALITY_MAX - 2 ? $item->quality = $item->quality + 2 : $item->quality = self::QUALITY_MAX;
         } else {
             $item->quality = $item->quality + 1;
         }
@@ -84,17 +87,17 @@ final class GildedRose
 
     private function conjuredItemUpdate(Item $item): void
     {
-        if ($item->sell_in > 0) { // before sell date is passed
+        if ($item->sell_in > self::SELL_IN_PASSED) { // before sell date is passed
             if ($item->quality >= 2) {
                 $item->quality = $item->quality - 2;
             } else {
-                $item->quality = 0;
+                $item->quality = self::QUALITY_MIN;
             }
         } else { // after sell date is passed
             if ($item->quality >= 4) {
                 $item->quality = $item->quality - 4;
             } else {
-                $item->quality = 0;
+                $item->quality = self::QUALITY_MIN;
             }
         }
     }
