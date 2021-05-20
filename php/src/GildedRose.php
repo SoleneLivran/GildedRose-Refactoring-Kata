@@ -56,6 +56,8 @@ final class GildedRose
         } else { // after sell date is passed
             if ($item->quality >= 2) {
                 $item->quality = $item->quality - 2;
+            } else {
+                $item->quality = 0;
             }
         }
 
