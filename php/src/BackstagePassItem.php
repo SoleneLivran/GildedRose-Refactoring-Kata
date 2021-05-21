@@ -17,16 +17,25 @@ class BackstagePassItem extends QualityIncreasingItem
             $this->quality = self::QUALITY_MIN;
             // 5 or less = last minute
         } else if ($this->sell_in <= self::BACKSTAGEPASS_SELL_IN_LAST_MINUTE) {
-            $changeValue = self::BACKSTAGEPASS_QUALITY_LAST_MINUTE_INCREASE;
-            $this->quality <= self::QUALITY_MAX - $changeValue ? $this->quality = $this->quality + $changeValue : $this->quality = self::QUALITY_MAX;
-            // 10 or less = approaching
+            $this->setLastMinuteQuality();
+        // 10 or less = approaching
         } else if ($this->sell_in <= self::BACKSTAGEPASS_SELL_IN_APPROACHING) {
-            $changeValue = self::QUALITY_CHANGE_DOUBLE;
-            $this->quality <= self::QUALITY_MAX - $changeValue ? $this->quality = $this->quality + $changeValue : $this->quality = self::QUALITY_MAX;
+            $this->setApproachingQuality();
             // more than 10 : regular quality
         } else {
-            $changeValue = $this->defineChangeValue();
-            $this->quality <= self::QUALITY_MAX - $changeValue ? $this->quality = $this->quality + $changeValue : $this->quality = self::QUALITY_MAX;
+            parent::updateItemQuality();
         }
+    }
+
+    private function setLastMinuteQuality(): void
+    {
+        $changeValue = self::BACKSTAGEPASS_QUALITY_LAST_MINUTE_INCREASE;
+        $this->quality <= self::QUALITY_MAX - $changeValue ? $this->quality = $this->quality + $changeValue : $this->quality = self::QUALITY_MAX;
+    }
+
+    private function setApproachingQuality(): void
+    {
+        $changeValue = self::QUALITY_CHANGE_DOUBLE;
+        $this->quality <= self::QUALITY_MAX - $changeValue ? $this->quality = $this->quality + $changeValue : $this->quality = self::QUALITY_MAX;
     }
 }
