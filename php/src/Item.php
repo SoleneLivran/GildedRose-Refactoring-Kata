@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace GildedRose;
 
-final class Item
+class Item
 {
     /**
      * @var string

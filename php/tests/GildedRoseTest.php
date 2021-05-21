@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use GildedRose\BackstagePassItem;
+use GildedRose\ConjuredItem;
 use GildedRose\GildedRose;
 use GildedRose\Item;
+use GildedRose\LegendaryItem;
+use GildedRose\QualityDecreasingItem;
+use GildedRose\QualityIncreasingItem;
 use PHPUnit\Framework\TestCase;
 
 class GildedRoseTest extends TestCase
@@ -32,7 +37,7 @@ class GildedRoseTest extends TestCase
     // Regular items : quality and sell_in decrase by one
     public function testRegularItem(): void
     {
-        $items = [new Item(self::ITEM_REGULAR, 10, 20)];
+        $items = [new QualityDecreasingItem(self::ITEM_REGULAR, 10, 20)];
         $gildedRose = new GildedRose($items);
 
         $gildedRose->updateQuality();
@@ -44,7 +49,7 @@ class GildedRoseTest extends TestCase
     // Conjured items : quality decreases by 2 and sell_in decrase by one
     public function testConjuredItem(): void
     {
-        $items = [new Item(self::ITEM_CONJURED, 10, 20)];
+        $items = [new ConjuredItem(self::ITEM_CONJURED, 10, 20)];
         $gildedRose = new GildedRose($items);
 
         $gildedRose->updateQuality();
@@ -56,7 +61,7 @@ class GildedRoseTest extends TestCase
     // Normal Item : quality decreases x2 after sell date passed
     public function testRegularItemAfterSellInPassed(): void
     {
-        $items = [new Item(self::ITEM_REGULAR, -1, 20)];
+        $items = [new QualityDecreasingItem(self::ITEM_REGULAR, -1, 20)];
         $gildedRose = new GildedRose($items);
 
         $gildedRose->updateQuality();
@@ -68,7 +73,7 @@ class GildedRoseTest extends TestCase
     // Conjured Item : quality decreases x4 after sell date passed
     public function testConjuredItemAfterSellInPassed(): void
     {
-        $items = [new Item(self::ITEM_CONJURED, -1, 20)];
+        $items = [new ConjuredItem(self::ITEM_CONJURED, -1, 20)];
         $gildedRose = new GildedRose($items);
 
         $gildedRose->updateQuality();
@@ -81,15 +86,15 @@ class GildedRoseTest extends TestCase
     public function testQualityNotBelowZero(): void
     {
         $items = [
-                    new Item(self::ITEM_REGULAR, 10, 0),
-                    new Item(self::ITEM_REGULAR, -2, 0),
-                    new Item(self::ITEM_REGULAR, 0, 1),
-                    new Item(self::ITEM_NAME_BACKSTAGEPASS, 0, 0),
-                    new Item(self::ITEM_NAME_BACKSTAGEPASS, -1, 0),
-                    new Item(self::ITEM_NAME_SULFURAS, 12, 0),
-                    new Item(self::ITEM_CONJURED, 10, 0),
-                    new Item(self::ITEM_CONJURED, 6, 1),
-                    new Item(self::ITEM_CONJURED, -1, 3)
+                    new QualityDecreasingItem(self::ITEM_REGULAR, 10, 0),
+                    new QualityDecreasingItem(self::ITEM_REGULAR, -2, 0),
+                    new QualityDecreasingItem(self::ITEM_REGULAR, 0, 1),
+                    new BackstagePassItem(self::ITEM_NAME_BACKSTAGEPASS, 0, 0),
+                    new BackstagePassItem(self::ITEM_NAME_BACKSTAGEPASS, -1, 0),
+                    new LegendaryItem(self::ITEM_NAME_SULFURAS, 12, 0),
+                    new ConjuredItem(self::ITEM_CONJURED, 10, 0),
+                    new ConjuredItem(self::ITEM_CONJURED, 6, 1),
+                    new ConjuredItem(self::ITEM_CONJURED, -1, 3)
         ];
         $gildedRose = new GildedRose($items);
 
@@ -104,10 +109,10 @@ class GildedRoseTest extends TestCase
     public function testQualityNotOver50(): void
     {
         $items = [
-            new Item(self::ITEM_NAME_BACKSTAGEPASS, 8, 50),
-            new Item(self::ITEM_NAME_BACKSTAGEPASS, 1, 48),
-            new Item(self::ITEM_NAME_BACKSTAGEPASS, 4, 49),
-            new Item(self::ITEM_NAME_BRIE, 6, 50)
+            new BackstagePassItem(self::ITEM_NAME_BACKSTAGEPASS, 8, 50),
+            new BackstagePassItem(self::ITEM_NAME_BACKSTAGEPASS, 1, 48),
+            new BackstagePassItem(self::ITEM_NAME_BACKSTAGEPASS, 4, 49),
+            new QualityIncreasingItem(self::ITEM_NAME_BRIE, 6, 50)
         ];
         $gildedRose = new GildedRose($items);
 
@@ -121,7 +126,7 @@ class GildedRoseTest extends TestCase
     // Aged Brie Item : quality increases by 1 each day and sell-in decreases by 1
     public function testItemQualityIncreasesByOne(): void
     {
-        $items = [new Item(self::ITEM_NAME_BRIE, 7, 20)];
+        $items = [new QualityIncreasingItem(self::ITEM_NAME_BRIE, 7, 20)];
         $gildedRose = new GildedRose($items);
 
         $gildedRose->updateQuality();
@@ -133,7 +138,7 @@ class GildedRoseTest extends TestCase
     // Legendary Item (Sulfuras) : no change in sell_in nor in quality
     public function testLegendaryItem(): void
     {
-        $items = [new Item(self::ITEM_NAME_SULFURAS, 10, 20)];
+        $items = [new LegendaryItem(self::ITEM_NAME_SULFURAS, 10, 20)];
         $gildedRose = new GildedRose($items);
 
         $gildedRose->updateQuality();
@@ -145,7 +150,7 @@ class GildedRoseTest extends TestCase
     // Backstage pass, sell-in more than 10 days : quality increases by 1
     public function testBackstagePassMoreThanTenDays(): void
     {
-        $items = [new Item(self::ITEM_NAME_BACKSTAGEPASS, 11, 20)];
+        $items = [new BackstagePassItem(self::ITEM_NAME_BACKSTAGEPASS, 11, 20)];
         $gildedRose = new GildedRose($items);
 
         $gildedRose->updateQuality();
@@ -158,8 +163,8 @@ class GildedRoseTest extends TestCase
     public function testBackstagePassTenDaysOrLess(): void
     {
         $items = [
-            new Item(self::ITEM_NAME_BACKSTAGEPASS, 10, 20),
-            new Item(self::ITEM_NAME_BACKSTAGEPASS, 18, 12),
+            new BackstagePassItem(self::ITEM_NAME_BACKSTAGEPASS, 10, 20),
+            new BackstagePassItem(self::ITEM_NAME_BACKSTAGEPASS, 18, 12),
             ];
         $gildedRose = new GildedRose($items);
 
@@ -174,8 +179,8 @@ class GildedRoseTest extends TestCase
     public function testBackstagePassFiveDaysOrLess(): void
     {
         $items = [
-            new Item(self::ITEM_NAME_BACKSTAGEPASS, 5, 20),
-            new Item(self::ITEM_NAME_BACKSTAGEPASS, 1, 12)
+            new BackstagePassItem(self::ITEM_NAME_BACKSTAGEPASS, 5, 20),
+            new BackstagePassItem(self::ITEM_NAME_BACKSTAGEPASS, 1, 12)
         ];
         $gildedRose = new GildedRose($items);
 
@@ -190,8 +195,8 @@ class GildedRoseTest extends TestCase
     public function testBackstagePassSellDateHasPassed(): void
     {
         $items = [
-            new Item(self::ITEM_NAME_BACKSTAGEPASS, 0, 20),
-            new Item(self::ITEM_NAME_BACKSTAGEPASS, -1, 12)
+            new BackstagePassItem(self::ITEM_NAME_BACKSTAGEPASS, 0, 20),
+            new BackstagePassItem(self::ITEM_NAME_BACKSTAGEPASS, -1, 12)
         ];
         $gildedRose = new GildedRose($items);
 
