@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace GildedRose;
 
 
-class QualityIncreasingItem extends PerishableItem
+class QualityIncreasingItem extends RegularItem
 {
-    const QUALITY_MAX = 50;
-
-    public function increaseItemQuality(int $changeValue): void
+    public function updateItemQuality(): void
     {
+        $changeValue = $this->defineChangeValue();
+
         $this->quality <= self::QUALITY_MAX - $changeValue ? $this->quality = $this->quality + $changeValue : $this->quality = self::QUALITY_MAX;
     }
 }

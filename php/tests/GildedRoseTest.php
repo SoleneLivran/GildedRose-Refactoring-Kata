@@ -11,6 +11,7 @@ use GildedRose\Item;
 use GildedRose\LegendaryItem;
 use GildedRose\QualityDecreasingItem;
 use GildedRose\QualityIncreasingItem;
+use GildedRose\RegularItem;
 use PHPUnit\Framework\TestCase;
 
 class GildedRoseTest extends TestCase
@@ -34,10 +35,10 @@ class GildedRoseTest extends TestCase
         $this->assertSame(self::ITEM_REGULAR, $items[0]->name);
     }
 
-    // Regular items : quality and sell_in decrase by one
+    // Regular items : quality and sell_in decrease by one
     public function testRegularItem(): void
     {
-        $items = [new QualityDecreasingItem(self::ITEM_REGULAR, 10, 20)];
+        $items = [new RegularItem(self::ITEM_REGULAR, 10, 20)];
         $gildedRose = new GildedRose($items);
 
         $gildedRose->updateQuality();
@@ -61,7 +62,7 @@ class GildedRoseTest extends TestCase
     // Normal Item : quality decreases x2 after sell date passed
     public function testRegularItemAfterSellInPassed(): void
     {
-        $items = [new QualityDecreasingItem(self::ITEM_REGULAR, -1, 20)];
+        $items = [new RegularItem(self::ITEM_REGULAR, -1, 20)];
         $gildedRose = new GildedRose($items);
 
         $gildedRose->updateQuality();
@@ -86,9 +87,9 @@ class GildedRoseTest extends TestCase
     public function testQualityNotBelowZero(): void
     {
         $items = [
-                    new QualityDecreasingItem(self::ITEM_REGULAR, 10, 0),
-                    new QualityDecreasingItem(self::ITEM_REGULAR, -2, 0),
-                    new QualityDecreasingItem(self::ITEM_REGULAR, 0, 1),
+                    new RegularItem(self::ITEM_REGULAR, 10, 0),
+                    new RegularItem(self::ITEM_REGULAR, -2, 0),
+                    new RegularItem(self::ITEM_REGULAR, 0, 1),
                     new BackstagePassItem(self::ITEM_NAME_BACKSTAGEPASS, 0, 0),
                     new BackstagePassItem(self::ITEM_NAME_BACKSTAGEPASS, -1, 0),
                     new LegendaryItem(self::ITEM_NAME_SULFURAS, 12, 0),

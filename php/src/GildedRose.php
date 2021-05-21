@@ -11,8 +11,6 @@ final class GildedRose
      */
     private $items;
 
-    const QUALITY_CHANGE_REGULAR = 1;
-
     public function __construct(array $items)
     {
         $this->items = $items;
@@ -21,16 +19,10 @@ final class GildedRose
     public function updateQuality(): void
     {
         foreach ($this->items as $item) {
-            if (!$item instanceof PerishableItem) {
+            if (!$item instanceof RegularItem) {
                 continue;
             }
-            if ($item instanceof QualityIncreasingItem) {
-                $item->increaseItemQuality(self::QUALITY_CHANGE_REGULAR);
-            }
-            if ($item instanceof QualityDecreasingItem) {
-                $item->decreaseItemQuality(self::QUALITY_CHANGE_REGULAR);
-            }
-
+            $item->updateItemQuality();
             $item->decreaseItemSellIn($item);
         }
     }
